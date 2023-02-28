@@ -3,8 +3,7 @@ const FRAME_HEIGHT = 400;
 const FRAME_WIDTH = 400;
 const MARGINS = {left: 50, right: 50, top: 50, bottom: 50};
 
-
-//creates a scale for left visualization
+  //creates a scale for left visualization
 const LEFT_VIS_HEIGHT = FRAME_HEIGHT - MARGINS.top - MARGINS.bottom;
 const LEFT_VIS_WIDTH = FRAME_WIDTH - MARGINS.left - MARGINS.right; 
 
@@ -15,21 +14,9 @@ const FRAME1 = d3.select("#vis1")
                     .attr("width", FRAME_WIDTH)
                     .attr("class", "left"); 
 
-
-//creates a scale for middle visualization
-const MID_VIS_HEIGHT = FRAME_HEIGHT - MARGINS.top - MARGINS.bottom;
-const MID_VIS_WIDTH = FRAME_WIDTH - MARGINS.left - MARGINS.right; 
-
-//create a new frame - scatterplot
-const FRAME2 = d3.select("#vis2")
-                  .append("svg")
-                    .attr("height", FRAME_HEIGHT)
-                    .attr("width", FRAME_WIDTH)
-                    .attr("class", "middle"); 
-
-
 //read data and create plot
 d3.csv("data/iris.csv").then((data) => {
+
 
   //LEFT VISUALIZATION
 
@@ -60,7 +47,7 @@ d3.csv("data/iris.csv").then((data) => {
              .range([LEFT_VIS_HEIGHT, 0]);
 
    //Use X_SCALE1 and Y_SCALE1 to plot our points with appropriate x & y values
-  FRAME1.selectAll("points")
+    FRAME1.selectAll("points")
       .data(data) //passed from .then
       .enter()
       .append("circle")
@@ -78,6 +65,19 @@ d3.csv("data/iris.csv").then((data) => {
           .attr("font-size", '10px'); 
 
   //MIDDLE VISUALIZATION
+
+
+  //creates a scale for middle visualization
+const MID_VIS_HEIGHT = FRAME_HEIGHT - MARGINS.top - MARGINS.bottom;
+const MID_VIS_WIDTH = FRAME_WIDTH - MARGINS.left - MARGINS.right; 
+
+//create a new frame - scatterplot
+const FRAME2 = d3.select("#vis2")
+                  .append("svg")
+                    .attr("height", FRAME_HEIGHT)
+                    .attr("width", FRAME_WIDTH)
+                    .attr("class", "middle"); 
+
 
    // find max X
   const MAX_X2 = d3.max(data, (d) => { return parseInt(d.Sepal_Width); });
@@ -106,7 +106,8 @@ d3.csv("data/iris.csv").then((data) => {
              .range([MID_VIS_HEIGHT, 0]);
 
    //Use X_SCALE2 and Y_SCALE2 to plot our points with appropriate x & y values
-  FRAME2.selectAll("points")
+  let allPoints2 = FRAME2.append("g")
+      .selectAll("points")
       .data(data) //passed from .then
       .enter()
       .append("circle")
@@ -122,9 +123,29 @@ d3.csv("data/iris.csv").then((data) => {
         .call(d3.axisLeft(Y_SCALE2).ticks(10)) 
           .attr("font-size", '10px'); 
 
+  //Brushing
+  FRAME2.call( d3.brush()                 // Add the brush feature using the d3.brush function
+      .extent( [ [0,0], [FRAME_WIDTH, FRAME_HEIGHT] ] ) // initialise the brush area: start at 0,0 and finishes at width,height: it means I select the whole graph area
+      .on("start brush", updateChart) // Each time the brush selection changes, trigger the 'updateChart' function
+    );
+
+   // Function that is triggered when brushing is performed
+  function updateChart(event) {
+    extent = event.selection;
+    allPoints2.classed("brush", function(d){ return isBrushed(extent, (X_SCALE2(d.Sepal_Width) + MARGINS.left), (Y_SCALE2(d.Petal_Width) + MARGINS.top) ) } )
+  }
+  
+  // A function that return TRUE or FALSE according if a dot is in the selection or not
+  function isBrushed(brush_coords, cx, cy) {
+       var x0 = brush_coords[0][0],
+           x1 = brush_coords[1][0],
+           y0 = brush_coords[0][1],
+           y1 = brush_coords[1][1];
+      return x0 <= cx && cx <= x1 && y0 <= cy && cy <= y1;    // This return TRUE or FALSE depending on if the points is in the selected area
+  }
+
 
 });
-
 
 // RIGHT VISUALIZATION
 
