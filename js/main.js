@@ -1,3 +1,7 @@
+/*
+* Consulted https://d3-graph-gallery.com/graph/interactivity_brush.html for brushing with scatterplots (source is also noted in acknowledgements
+*/
+
 //Declare constants for frame
 const FRAME_HEIGHT = 400;
 const FRAME_WIDTH = 400;
