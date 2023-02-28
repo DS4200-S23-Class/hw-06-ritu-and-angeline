@@ -34,6 +34,7 @@ body {
 	opacity: 50%;
 }
 
+
 .bar_setosa {
 	fill: #7fc97f;
 }
@@ -45,3 +46,11 @@ body {
 .bar_versicolor {
 	fill: #fdc086;
 }
+
+
+.brush {
+  opacity: 1;
+  stroke: orangered;
+  stroke-width: 1px;
+}
+
