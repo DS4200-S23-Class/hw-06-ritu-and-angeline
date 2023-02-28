@@ -124,3 +124,68 @@ d3.csv("data/iris.csv").then((data) => {
 
 
 });
+
+
+// RIGHT VISUALIZATION
+
+const VIS_HEIGHT = FRAME_HEIGHT - MARGINS.top - MARGINS.bottom;
+const VIS_WIDTH = FRAME_WIDTH - MARGINS.left - MARGINS.right; 
+
+// add frame
+const FRAME3 = d3.select("#vis3")
+                  .append("svg")
+                    .attr("height", FRAME_HEIGHT)
+                    .attr("width", FRAME_WIDTH)
+                    .attr("class", "right");
+
+
+// define data
+const data = [
+  {species: 'setosa', count: 50},
+  {species: 'virginica', count: 50},
+  {species: 'versicolor', count:50}
+  ];
+
+
+// create a scale for x-axis
+const X_SCALE3 = d3.scaleBand()
+    .range([0, VIS_WIDTH])
+    .domain(data.map((d) => { return d.species; }))
+    .padding(0.5);
+
+
+// find the maximum y-value
+const MAX_Y3 = 50;
+
+// Define scale functions that maps our data values 
+// (domain) to pixel values (range)
+const Y_SCALE3 = d3.scaleLinear()
+            .domain([0, (MAX_Y3 + 1)])
+            .range([VIS_HEIGHT, 0]);
+
+// Use X_SCALE3 and Y_SCALE3 to plot our points with appropriate x & y values for the bar chart
+FRAME3.selectAll("bars")
+  .data(data) //passed from .then
+  .enter()
+  .append("rect")
+    .attr("x", (d) => { return (X_SCALE3(d.species) + MARGINS.left); })
+    .attr("y", (d) => { return (Y_SCALE3(d.count) + MARGINS.bottom); })
+    .attr("width", X_SCALE3.bandwidth())
+    .attr("height", (d) => { return VIS_HEIGHT - Y_SCALE3(d.count); })
+    .attr("class", "barChart")
+    .attr("class", function(d, i) {return 'bar_' + d.species})
+    .text("Count of Iris Species");
+
+// Add x axis to vis
+FRAME3.append("g") 
+      .attr("transform", "translate(" + MARGINS.left + 
+            "," + (VIS_HEIGHT + MARGINS.top) + ")") 
+      .call(d3.axisBottom(X_SCALE3).ticks(7)) 
+        .attr("font-size", '20px'); 
+
+// Add y axis to vis
+FRAME3.append("g") 
+      .attr("transform", "translate(" + MARGINS.bottom + 
+            "," + (MARGINS.top) + ")") 
+      .call(d3.axisLeft(Y_SCALE3)) 
+        .attr("font-size", '20px'); 
