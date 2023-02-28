@@ -47,7 +47,8 @@ d3.csv("data/iris.csv").then((data) => {
              .range([LEFT_VIS_HEIGHT, 0]);
 
    //Use X_SCALE1 and Y_SCALE1 to plot our points with appropriate x & y values
-    FRAME1.selectAll("points")
+    let allPoints1 = FRAME1.append("g")
+      .selectAll("points")
       .data(data) //passed from .then
       .enter()
       .append("circle")
@@ -123,8 +124,8 @@ const FRAME2 = d3.select("#vis2")
         .call(d3.axisLeft(Y_SCALE2).ticks(10)) 
           .attr("font-size", '10px'); 
 
-  //Brushing
-  FRAME2.call( d3.brush()                 // Add the brush feature using the d3.brush function
+  //Brushing using d3.brush funtion
+  FRAME2.call( d3.brush()                 
       .extent( [ [0,0], [FRAME_WIDTH, FRAME_HEIGHT] ] ) // initialise the brush area: start at 0,0 and finishes at width,height: it means I select the whole graph area
       .on("start brush", updateChart) // Each time the brush selection changes, trigger the 'updateChart' function
     );
@@ -132,10 +133,11 @@ const FRAME2 = d3.select("#vis2")
    // Function that is triggered when brushing is performed
   function updateChart(event) {
     extent = event.selection;
-    allPoints2.classed("brush", function(d){ return isBrushed(extent, (X_SCALE2(d.Sepal_Width) + MARGINS.left), (Y_SCALE2(d.Petal_Width) + MARGINS.top) ) } )
+    allPoints1.classed("brush", function(d){ return isBrushed(extent, (X_SCALE2(d.Sepal_Width) + MARGINS.left), (Y_SCALE2(d.Petal_Width) + MARGINS.top) ) } );
+    allPoints2.classed("brush", function(d){ return isBrushed(extent, (X_SCALE2(d.Sepal_Width) + MARGINS.left), (Y_SCALE2(d.Petal_Width) + MARGINS.top) ) } );
   }
   
-  // A function that return TRUE or FALSE according if a dot is in the selection or not
+  //Returns true or false if dot is in selection
   function isBrushed(brush_coords, cx, cy) {
        var x0 = brush_coords[0][0],
            x1 = brush_coords[1][0],
