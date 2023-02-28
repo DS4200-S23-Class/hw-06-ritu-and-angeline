@@ -33,3 +33,24 @@ body {
 	fill: #beaed4;
 	opacity: 50%;
 }
+
+
+.bar_setosa {
+	fill: #7fc97f;
+}
+
+.bar_virginica {
+	fill: #beaed4;
+}
+
+.bar_versicolor {
+	fill: #fdc086;
+}
+
+
+.brush {
+  opacity: 1;
+  stroke: orangered;
+  stroke-width: 1px;
+}
+
